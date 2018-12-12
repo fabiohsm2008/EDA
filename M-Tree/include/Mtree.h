@@ -20,6 +20,7 @@ class Mtree
         Mtree(int);
         Mtree(int,point*);
         void insertar(point*);
+        vector<point*> K_nn(int k, point *p);
         pair<point*, point*> pickValues();
         pair<Mtree*, Mtree*> pickSons();
         void split();

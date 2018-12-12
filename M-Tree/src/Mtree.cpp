@@ -66,15 +66,14 @@ pair<Mtree*, Mtree*> Mtree::pickSons(){
 void Mtree::split(){
     if(root){
         Mtree *new_root = new Mtree(M);
-        new_root->feature_value = feature_value;
         Mtree *brother = new Mtree(M);
         if(values.size()!=0){
             pair<point*, point*> seeds = pickValues();
             vector<point*> temp = values;
             values.clear();
-            feature_value = seeds.first;
+            new_root->feature_value = seeds.first;
             for(int i = 0; i < temp.size()/2; ++i){
-                insertar(temp[i]);
+                new_root->insertar(temp[i]);
             }
             brother->feature_value = seeds.second;
             for(int i = temp.size()/2; i < temp.size(); ++i){
@@ -85,27 +84,22 @@ void Mtree::split(){
             pair<Mtree*, Mtree*> seeds = pickSons();
             vector<Mtree*> temp = sons;
             sons.clear();
-            feature_value = seeds.first->feature_value;
+            new_root->feature_value = seeds.first->feature_value;
             for(int i = 0; i < temp.size()/2; ++i){
-                sons.push_back(temp[i]);
+                new_root->sons.push_back(temp[i]);
             }
             brother->feature_value = seeds.second->feature_value;
             for(int i = temp.size()/2; i < temp.size(); ++i){
                 brother->sons.push_back(temp[i]);
             }
         }
-        root = false;
-        new_root->root = true;
-        new_root->leaf = false;
-        parent = new_root;
-        brother->parent = new_root;
-        distance_parent = euclidean_distance(feature_value, parent->feature_value);
+        leaf = false;
+        new_root->parent = this;
+        brother->parent = this;
+        new_root->distance_parent = euclidean_distance(feature_value, new_root->parent->feature_value);
         brother->distance_parent = euclidean_distance(brother->feature_value, brother->parent->feature_value);
-        new_root->sons.push_back(this);
-        new_root->sons.push_back(brother);
-        if(parent->sons.size() > M){
-            parent->split();
-        }
+        sons.push_back(new_root);
+        sons.push_back(brother);
     }
     else{
         Mtree *brother = new Mtree(M);
@@ -172,7 +166,6 @@ void Mtree::insertar(point *p){
         values.push_back(p);
         refill(p);
         if(values.size() > M){
-            cout << p->idx << endl;
             split();
         }
     }

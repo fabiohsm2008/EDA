@@ -8,6 +8,12 @@ using namespace std;
 
 vector<point*> valores;
 
+void printvector(vector<point*> temp){
+    for(int i = 0; i < temp.size(); ++i){
+        cout << temp[i]->idx << " ";
+    }
+}
+
 int main()
 {
     ifstream archivo;
@@ -19,15 +25,15 @@ int main()
     string feature;
     point *a = new point();
     a->idx = tam;
-    valores.push_back(a);
     ++tam;
     stringstream stream(linea);
     while(getline(stream, feature, ',')){
         a->features.push_back(stod(feature));
         features++;
     }
-    Mtree *arbol = new Mtree(500,a);
+    Mtree *arbol = new Mtree(5000,a);
     arbol->root = true;
+    valores.push_back(a);
     while(getline(archivo, linea)){
         point *b = new point();
         b->idx = tam;
@@ -42,5 +48,6 @@ int main()
     }
     archivo.close();
     cout << tam << " " << features << endl;
+
     return 0;
 }
